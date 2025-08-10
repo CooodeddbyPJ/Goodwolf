@@ -26,7 +26,7 @@ Google Search Query Integration – Directs searches to Google
 
 📥 Installation & Setup
 Clone this repository
-git clone https://github.com/CodeddbyPJ/Goodwolf.git
+git clone [https://github.com/CodeddbyPJ/Goodwolf.git](https://cooodeddbypj.github.io/Goodwolf/)
 cd Goodwolf
 Run the project
 
