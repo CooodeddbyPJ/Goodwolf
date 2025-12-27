@@ -1,125 +1,413 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Good-Wolf</title>
-    <link rel="icon" href="https://bcassetcdn.com/public/blog/wp-content/uploads/2019/05/18095917/Pup.jpg" type="Good-Wolf Logo.png">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            text-align: center;
-            padding: 30px;
-            background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-        }
-        .logo {
-            max-width: 200px;
-            margin-bottom: 30px;
-        }
-        .search-bar {
-            width: 80%;
-            padding: 15px;
-            border: 2px solid #ff7700;
-            border-radius: 25px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            outline: none;
-        }
-        .search-bar::placeholder {
-            color: #999999;
-        }
-        .search-btn, .voice-search-btn {
-            padding: 15px 30px;
-            background-color: #ff7700; 
-            color: #ffffff;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        .search-btn:hover, .voice-search-btn:hover {
-            background-color: #ff8800; 
-        }
-        .search-btn:focus, .voice-search-btn:focus {
-            outline: none;
-        }
-        .voice-search-btn.clicked {
-            background-color: #000000;
-        }
-        .translation {
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Good-Wolf Global Search</title>
+  <link rel="icon" href="https://bcassetcdn.com/public/blog/wp-content/uploads/2019/05/18095917/Pup.jpg"
+    type="image/jpeg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-color: #ff7700;
+      --secondary-color: #2c3e50;
+      --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      --glass-bg: rgba(255, 255, 255, 0.95);
+      --error-color: #e74c3c;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-gradient);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 550px;
+      padding: 40px;
+      background: var(--glass-bg);
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .logo-section {
+      margin-bottom: 25px;
+    }
+
+    .logo-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-color);
+      padding: 3px;
+      background: white;
+      transition: transform 0.3s;
+    }
+
+    .logo-img:hover {
+      transform: rotate(10deg) scale(1.05);
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      margin: 10px 0 25px 0;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+    }
+
+    /* Search Box Design */
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 16px 85px 16px 20px;
+      /* Space for icons on right */
+      border: 2px solid transparent;
+      border-radius: 50px;
+      font-size: 16px;
+      background: #f1f3f4;
+      outline: none;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-bar:focus {
+      background: #fff;
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 12px rgba(255, 119, 0, 0.15);
+    }
+
+    /* Icons inside Search Bar */
+    .input-icons {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #757575;
+      font-size: 1.2rem;
+      transition: color 0.2s;
+      padding: 5px;
+    }
+
+    .icon-btn:hover {
+      color: var(--primary-color);
+    }
+
+    /* Voice Animation */
+    .voice-btn.listening {
+      color: var(--error-color);
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Clear Button (Hidden by default) */
+    .clear-btn {
+      font-size: 1rem;
+      display: none;
+    }
+
+    .clear-btn.visible {
+      display: block;
+    }
+
+    /* Filters and Buttons */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .lang-select {
+      padding: 10px 15px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      background-color: white;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .main-btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s;
+      flex: 1;
+      max-width: 150px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: #f1f3f4;
+      color: var(--secondary-color);
+    }
+
+    .main-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #666;
+      min-height: 20px;
+      font-weight: 500;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+        border-radius: 50%;
+      }
+
+      70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+        border-radius: 50%;
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+        border-radius: 50%;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <img src="https://bcassetcdn.com/public/blog/wp-content/uploads/2019/05/18095917/Pup.jpg" alt="Good-Wolf Logo" class="logo">
-        <form id="searchForm" action="https://www.google.com/search" method="GET" target="_blank">
-            <input type="text" id="searchInput" name="q" class="search-bar" placeholder="Search Good-Wolf">
-            <button type="submit" class="search-btn">Good-Wolf Search</button>
-            <button type="button" id="voiceSearchBtn" class="voice-search-btn">
-                Voice Search
-            </button>
-            <div class="translation">
-                Language:
-                <select name="lr">
-                    <option value="lang_en">English</option>
-                    <option value="lang_ar">Arabic</option>
-                    <option value="lang_zh-CN">Chinese (Simplified)</option>
-                    <option value="lang_zh-TW">Chinese (Traditional)</option>
-                    <option value="lang_fr">French</option>
-                    <option value="lang_de">German</option>
-                    <option value="lang_hi">Hindi</option>
-                    <option value="lang_it">Italian</option>
-                    <option value="lang_ja">Japanese</option>
-                    <option value="lang_ko">Korean</option>
-                    <option value="lang_pt-BR">Portuguese (Brazil)</option>
-                    <option value="lang_ru">Russian</option>
-                    <option value="lang_es">Spanish</option>
-                    <option value="lang_tl">Tagalog</option>
-                    <option value="lang_th">Thai</option>
-                    <option value="lang_tr">Turkish</option>
-                    <option value="lang_vi">Vietnamese</option>
-                </select>
-            </div>
-        </form>
+
+  <div class="container">
+    <div class="logo-section">
+      <img src="https://bcassetcdn.com/public/blog/wp-content/uploads/2019/05/18095917/Pup.jpg" alt="Logo"
+        class="logo-img">
+      <h1>Good-Wolf Search</h1>
     </div>
 
-    <script>
-        const voiceSearchBtn = document.getElementById('voiceSearchBtn');
-        const searchInput = document.getElementById('searchInput');
-        const searchForm = document.getElementById('searchForm');
-        let recognition;
+    <form id="searchForm" action="https://www.google.com/search" method="GET" target="_blank">
 
-        voiceSearchBtn.addEventListener('click', function() {
-            if (!('webkitSpeechRecognition' in window)) {
-                alert("Speech recognition is not supported in this browser. Please use a supported browser.");
-                return;
-            }
+      <div class="search-wrapper">
+        <input type="text" id="searchInput" name="q" class="search-bar" placeholder="Search the web..."
+          autocomplete="off" required>
 
-            recognition = new webkitSpeechRecognition();
-            recognition.lang = 'en-US';
+        <div class="input-icons">
+          <button type="button" id="clearBtn" class="icon-btn clear-btn" title="Clear">
+            <i class="fas fa-times"></i>
+          </button>
+          <button type="button" id="voiceBtn" class="icon-btn voice-btn" title="Voice Search">
+            <i class="fas fa-microphone"></i>
+          </button>
+        </div>
+      </div>
 
-            recognition.onresult = function(event) {
-                const result = event.results[0][0].transcript;
-                searchInput.value = result;
-                searchForm.submit();
-                voiceSearchBtn.classList.add('clicked');
-            };
+      <div class="controls">
+        <select id="languageSelect" name="hl" class="lang-select" title="Select Search & Voice Language">
+          <option value="en-US">English (United States)</option>
+          <option value="fil-PH">Filipino (Tagalog)</option>
+          <option value="es-ES">Spanish (Español)</option>
+          <option value="fr-FR">French (Français)</option>
+          <option value="de-DE">German (Deutsch)</option>
+          <option value="ja-JP">Japanese (日本語)</option>
+          <option value="ko-KR">Korean (한국어)</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="ar-SA">Arabic (العربية)</option>
+          <option value="ru-RU">Russian (Русский)</option>
+          <option value="it-IT">Italian (Italiano)</option>
+          <option value="pt-BR">Portuguese (Brasil)</option>
+        </select>
 
+        <div class="btn-group">
+          <button type="submit" class="main-btn btn-primary">
+            <i class="fas fa-search"></i> Search
+          </button>
+          <button type="submit" name="btnI" value="1" class="main-btn btn-secondary"
+            title="Go directly to the first result">
+            I'm Lucky
+          </button>
+        </div>
+      </div>
+
+      <div id="statusMsg" class="status-msg"></div>
+    </form>
+  </div>
+
+  <script>
+    // --- Configuration & DOM Elements ---
+    const searchInput = document.getElementById('searchInput');
+    const searchForm = document.getElementById('searchForm');
+    const voiceBtn = document.getElementById('voiceBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const languageSelect = document.getElementById('languageSelect');
+    const statusMsg = document.getElementById('statusMsg');
+
+    // --- Feature: Robust Voice Search with Debugger ---
+
+    // 1. Check if Browser Supports it
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = languageSelect.value;
+
+      // Update Voice Language when Dropdown Changes
+      languageSelect.addEventListener('change', () => {
+        recognition.lang = languageSelect.value;
+        statusMsg.style.color = "#666";
+        statusMsg.textContent = `Language set to: ${languageSelect.options[languageSelect.selectedIndex].text}`;
+      });
+
+      // Toggle Voice Search
+      voiceBtn.addEventListener('click', () => {
+        if (voiceBtn.classList.contains('listening')) {
+          recognition.stop();
+        } else {
+          // Try to start and catch immediate errors
+          try {
             recognition.start();
-        });
-    </script>
+            statusMsg.textContent = "Requesting microphone access...";
+          } catch (error) {
+            console.error("Start Error:", error);
+            alert("Error: Cannot start microphone. Please refresh the page.");
+          }
+        }
+      });
+
+      // Start Event
+      recognition.onstart = () => {
+        voiceBtn.classList.add('listening');
+        searchInput.placeholder = "Listening...";
+        statusMsg.style.color = "#e67e22"; // Orange color for active state
+        statusMsg.textContent = "Listening... Speak now.";
+      };
+
+      // End Event
+      recognition.onend = () => {
+        voiceBtn.classList.remove('listening');
+        searchInput.placeholder = "Search the web...";
+        if (statusMsg.textContent.includes("Listening")) {
+          statusMsg.textContent = "";
+        }
+      };
+
+      // Success Event
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        searchInput.value = transcript;
+        toggleClearBtn();
+        statusMsg.style.color = "green";
+        statusMsg.textContent = `Heard: "${transcript}" - Redirecting...`;
+
+        // Auto-submit after 1 second
+        setTimeout(() => {
+          searchForm.submit();
+        }, 1000);
+      };
+
+      // --- THE DIAGNOSTIC PART (Error Handling) ---
+      recognition.onerror = (event) => {
+        voiceBtn.classList.remove('listening');
+        let errorMsg = "";
+        let detailedMsg = "";
+
+        if (event.error === 'not-allowed') {
+          errorMsg = "Microphone Blocked!";
+          detailedMsg = "Please allow microphone access in your browser settings (Click the Lock icon near the URL).";
+        } else if (event.error === 'no-speech') {
+          errorMsg = "No speech detected.";
+          detailedMsg = "Please speak closer to the microphone and try again.";
+        } else if (event.error === 'audio-capture') {
+          errorMsg = "No Microphone Found.";
+          detailedMsg = "Please check if your microphone is plugged in.";
+        } else if (event.error === 'network') {
+          errorMsg = "Network Error.";
+          detailedMsg = "Voice search requires an internet connection.";
+        } else {
+          errorMsg = "Error: " + event.error;
+          detailedMsg = "An unknown error occurred.";
+        }
+
+        // Show in the UI
+        statusMsg.style.color = "red";
+        statusMsg.textContent = errorMsg;
+
+        // Show popup only for critical errors so you know what to fix
+        if (event.error === 'not-allowed' || event.error === 'audio-capture') {
+          alert(`${errorMsg}\n\n${detailedMsg}`);
+        }
+      };
+
+    } else {
+      // If browser doesn't support it at all
+      voiceBtn.style.display = 'none';
+      statusMsg.textContent = "Note: Voice Search only works in Google Chrome / Edge.";
+    }
+
+    // --- Feature: Clear Button Logic ---
+    function toggleClearBtn() {
+      if (searchInput.value.length > 0) {
+        clearBtn.classList.add('visible');
+      } else {
+        clearBtn.classList.remove('visible');
+      }
+    }
+
+    searchInput.addEventListener('input', toggleClearBtn);
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInput.focus();
+      toggleClearBtn();
+    });
+
+  </script>
 </body>
+
 </html>
